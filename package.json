@@ -1,0 +1,26 @@
+{
+  "name": "vue-docgen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/vue": "^2.0.0",
+    "typescript": "^5.5.3",
+    "vue": "^3.4.31"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.24.8",
+    "@babel/traverse": "^7.24.8",
+    "@vue/compiler-sfc": "^3.4.31"
+  }
+}

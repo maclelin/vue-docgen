@@ -5,7 +5,7 @@ import { getProps, getPropsForSetup } from './get-props-info';
 
 
 
-export const analysisVue3 = (filePath: string) => {
+export const analysisVue = (filePath: string) => {
   // 读取.vue文件
   const componentSource = fs.readFileSync(filePath, 'utf-8');
 

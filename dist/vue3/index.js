@@ -26,12 +26,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.analysisVue3 = void 0;
+exports.analysisVue = void 0;
 const compiler_sfc_1 = require("@vue/compiler-sfc");
 const fs_1 = __importDefault(require("fs"));
 const parser = __importStar(require("@babel/parser"));
 const get_props_info_1 = require("./get-props-info");
-const analysisVue3 = (filePath) => {
+const analysisVue = (filePath) => {
     // 读取.vue文件
     const componentSource = fs_1.default.readFileSync(filePath, 'utf-8');
     // 解析.vue文件
@@ -67,5 +67,5 @@ const analysisVue3 = (filePath) => {
         console.log('未找到<script>或<script setup>块');
     }
 };
-exports.analysisVue3 = analysisVue3;
+exports.analysisVue = analysisVue;
 //# sourceMappingURL=index.js.map

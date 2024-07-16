@@ -39,16 +39,23 @@ const analysisVue3 = (filePath) => {
     const result = (0, compiler_sfc_1.compileScript)(descriptor, {
         id: 'test',
     });
-    const ast = parser.parse(result.content, {
-        sourceType: 'module', // 设置sourceType为"module"
-        plugins: ['jsx', 'typescript'],
-    });
     if (descriptor.scriptSetup) {
         // 如果使用了<script setup>，需要使用compileScriptSetupDescriptor方法
-        // const script = compilerSfc.compileScriptSetupDescriptor(descriptor);
-        // console.log(script.bindings.props); // 输出props
+        const scriptSetupContent = descriptor.scriptSetup.content;
+        const ast = parser.parse(scriptSetupContent, {
+            sourceType: 'module', // 设置sourceType为"module"
+            plugins: ['jsx', 'typescript'],
+        });
+        const props = (0, get_props_info_1.getPropsForSetup)(ast);
+        return {
+            props,
+        };
     }
     else if (descriptor.script) {
+        const ast = parser.parse(result.content, {
+            sourceType: 'module', // 设置sourceType为"module"
+            plugins: ['jsx', 'typescript'],
+        });
         // 如果使用了常规的<script>，可以直接获取内容
         const props = (0, get_props_info_1.getProps)(ast);
         return {

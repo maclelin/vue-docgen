@@ -36,9 +36,9 @@ export function printPropInfo(path: any) {
     // 遍历AST并查找props定义
     traverse(ast, {
      ExportDefaultDeclaration(path: any) {
-       const propsNode = path.node.declaration.properties.find(
-         (prop: any) => prop.key.name === 'props'
-       );
+      const propsNode = path.node.declaration.properties.find(
+        (prop: any) => prop.key.name === 'props'
+      );
        if (propsNode) {
         // 遍历propsNode.value
         traverse(propsNode.value, {
@@ -58,3 +58,31 @@ export function printPropInfo(path: any) {
    });
    return props;
  };
+
+ export const getPropsForSetup = (ast: any) => {
+  let props = {};
+  // 遍历AST并查找props定义
+  traverse(ast, {
+    CallExpression(path: any) {
+      if (path.node.callee.name === 'defineProps') {
+        const propsNode = path.get('arguments')[0];
+        if (propsNode) {
+          // 遍历propsNode.value
+          traverse(propsNode.node, {
+            ObjectProperty(path: any) {
+                // 检查父节点是否是props节点
+              if (path.parent === propsNode.node) {
+                const propObj = printPropInfo(path);
+                props = {
+                  ...props,
+                  ...propObj,
+                }
+              }
+            },
+          }, path.scope, path); // 传递scope和parentPath参数
+        }
+      };
+   },
+ });
+ return props;
+};

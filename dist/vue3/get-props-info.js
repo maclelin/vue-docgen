@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProps = void 0;
+exports.getPropsForSetup = exports.getProps = void 0;
 exports.printPropInfo = printPropInfo;
 const { default: traverse } = require('@babel/traverse');
 function printPropInfo(path) {
@@ -55,4 +55,30 @@ const getProps = (ast) => {
     return props;
 };
 exports.getProps = getProps;
+const getPropsForSetup = (ast) => {
+    let props = {};
+    // 遍历AST并查找props定义
+    traverse(ast, {
+        CallExpression(path) {
+            if (path.node.callee.name === 'defineProps') {
+                const propsNode = path.get('arguments')[0];
+                if (propsNode) {
+                    // 遍历propsNode.value
+                    traverse(propsNode.node, {
+                        ObjectProperty(path) {
+                            // 检查父节点是否是props节点
+                            if (path.parent === propsNode.node) {
+                                const propObj = printPropInfo(path);
+                                props = Object.assign(Object.assign({}, props), propObj);
+                            }
+                        },
+                    }, path.scope, path); // 传递scope和parentPath参数
+                }
+            }
+            ;
+        },
+    });
+    return props;
+};
+exports.getPropsForSetup = getPropsForSetup;
 //# sourceMappingURL=get-props-info.js.map

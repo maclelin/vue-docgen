@@ -46,7 +46,8 @@ const analysisVue = (filePath) => {
             sourceType: 'module', // 设置sourceType为"module"
             plugins: ['jsx', 'typescript'],
         });
-        const props = (0, get_props_info_1.getPropsForSetup)(ast);
+        // const importTypes = getImportType(ast, filePath);
+        const props = (0, get_props_info_1.getPropsForSetup)(ast, filePath);
         return {
             props,
         };
@@ -56,8 +57,9 @@ const analysisVue = (filePath) => {
             sourceType: 'module', // 设置sourceType为"module"
             plugins: ['jsx', 'typescript'],
         });
+        // const importTypes = getImportType(ast, filePath);
         // 如果使用了常规的<script>，可以直接获取内容
-        const props = (0, get_props_info_1.getProps)(ast);
+        const props = (0, get_props_info_1.getProps)(ast, filePath);
         return {
             props,
         };

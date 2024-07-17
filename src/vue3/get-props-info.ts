@@ -1,7 +1,9 @@
+import { getImportType } from "./get-import-type-module";
+
 const { default: traverse } = require('@babel/traverse');
 
 export const getDefaultVal = (node: any) => {
-  let result = node.toString();
+  let result = node.node.value || node.toString();
   if (node.type === 'ArrowFunctionExpression') {
     result = eval(`(${result})()`);
   } else if (node.isObjectExpression()) {
@@ -15,12 +17,37 @@ export const getDefaultVal = (node: any) => {
   return result;
 }
 
-export function printPropInfo(path: any) {
+export const getType = (node: any, ast: any, vuePath: string) => {
+  let propType = '';
+  if (node) {
+    propType = node.get('value').toString();
+    // 复合类型
+    if (propType.includes('Object as Proptype<')) {
+      const customPropType = node.node.value.typeAnnotation.typeParameters.params[0].typeName.name;
+      // 拿到类型后要进行转换，拿到这个类型的实际内容
+      const types = getImportType(ast, vuePath, customPropType);
+      if (types) {
+        propType = types;
+      }
+    }
+    if (propType.includes('Array as Proptype<')) {
+      const customPropType = node.node.value.typeAnnotation.typeParameters.params[0].elementType.typeName.name;
+      // 拿到类型后要进行转换，拿到这个类型的实际内容
+      const types = getImportType(ast, vuePath, customPropType);
+      if (types) {
+        propType = types;
+      }
+    }
+  }
+  return propType;
+};
+
+export function printPropInfo(path: any, vuePath: string, ast: any) {
     const propName = path.node.key.name;
     const propTypeNode = path.get('value.properties').find((propPath: any) => propPath.node.key.name === 'type');
     let propType = undefined;
     if (propTypeNode) {
-      propType = propTypeNode.get('value').toString();
+      propType = getType(propTypeNode, ast, vuePath);
     }
     const propDefault = path.get('value.properties').find((propPath: any) => propPath.node.key.name === 'default');
     const propDefaultNode = propDefault && propDefault.get('value');
@@ -47,7 +74,7 @@ export function printPropInfo(path: any) {
     };
   };
   
-  export const getProps = (ast: any) => {
+  export const getProps = (ast: any, vuePath: string) => {
     let props = {};
     // 遍历AST并查找props定义
     traverse(ast, {
@@ -61,7 +88,7 @@ export function printPropInfo(path: any) {
           ObjectProperty(path: any) {
               // 检查父节点是否是props节点
             if (path.parent === propsNode.value) {
-              const propObj = printPropInfo(path);
+              const propObj = printPropInfo(path, vuePath, ast);
               props = {
                 ...props,
                 ...propObj,
@@ -75,7 +102,7 @@ export function printPropInfo(path: any) {
    return props;
  };
 
- export const getPropsForSetup = (ast: any) => {
+ export const getPropsForSetup = (ast: any, vuePath: string) => {
   let props = {};
   // 遍历AST并查找props定义
   traverse(ast, {
@@ -88,7 +115,7 @@ export function printPropInfo(path: any) {
             ObjectProperty(path: any) {
                 // 检查父节点是否是props节点
               if (path.parent === propsNode.node) {
-                const propObj = printPropInfo(path);
+                const propObj = printPropInfo(path, vuePath, ast);
                 props = {
                   ...props,
                   ...propObj,

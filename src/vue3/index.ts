@@ -42,4 +42,4 @@ export const analysisVue = (filePath: string) => {
   }
 };
 
-
+export const test = () => {};

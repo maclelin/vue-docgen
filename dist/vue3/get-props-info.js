@@ -1,8 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPropsForSetup = exports.getProps = void 0;
+exports.getPropsForSetup = exports.getProps = exports.getDefaultVal = void 0;
 exports.printPropInfo = printPropInfo;
 const { default: traverse } = require('@babel/traverse');
+const getDefaultVal = (node) => {
+    let result = node.toString();
+    if (node.type === 'ArrowFunctionExpression') {
+        result = eval(`(${result})()`);
+    }
+    else if (node.isObjectExpression()) {
+        result = {};
+        node.get('properties').forEach((prop) => {
+            result[prop.node.key.name] = prop.node.value.value;
+        });
+    }
+    else if (node.isArrayExpression()) {
+        result = node.node.elements.map((element) => element.value);
+    }
+    return result;
+};
+exports.getDefaultVal = getDefaultVal;
 function printPropInfo(path) {
     const propName = path.node.key.name;
     const propTypeNode = path.get('value.properties').find((propPath) => propPath.node.key.name === 'type');
@@ -12,7 +29,8 @@ function printPropInfo(path) {
     }
     const propDefault = path.get('value.properties').find((propPath) => propPath.node.key.name === 'default');
     const propDefaultNode = propDefault && propDefault.get('value');
-    const propDefaultValue = propDefaultNode && propDefaultNode.evaluate().value;
+    // const propDefaultValue = propDefaultNode && propDefaultNode.evaluate().value;
+    const propDefaultValue = (0, exports.getDefaultVal)(propDefaultNode);
     const leadingComments = path.node.leadingComments;
     const comment = leadingComments && leadingComments[0] && leadingComments[0].value.trim();
     console.log(`props: ${propName}`);

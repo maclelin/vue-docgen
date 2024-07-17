@@ -1,5 +1,20 @@
 const { default: traverse } = require('@babel/traverse');
 
+export const getDefaultVal = (node: any) => {
+  let result = node.toString();
+  if (node.type === 'ArrowFunctionExpression') {
+    result = eval(`(${result})()`);
+  } else if (node.isObjectExpression()) {
+    result = {};
+    node.get('properties').forEach((prop: any) => {
+      result[prop.node.key.name] = prop.node.value.value;
+    });
+  } else if (node.isArrayExpression()) {
+    result = node.node.elements.map((element: any) => element.value);
+  }
+  return result;
+}
+
 export function printPropInfo(path: any) {
     const propName = path.node.key.name;
     const propTypeNode = path.get('value.properties').find((propPath: any) => propPath.node.key.name === 'type');
@@ -9,7 +24,8 @@ export function printPropInfo(path: any) {
     }
     const propDefault = path.get('value.properties').find((propPath: any) => propPath.node.key.name === 'default');
     const propDefaultNode = propDefault && propDefault.get('value');
-    const propDefaultValue = propDefaultNode && propDefaultNode.evaluate().value;
+    // const propDefaultValue = propDefaultNode && propDefaultNode.evaluate().value;
+    const propDefaultValue = getDefaultVal(propDefaultNode);
   
     const leadingComments = path.node.leadingComments;
     const comment = leadingComments && leadingComments[0] && leadingComments[0].value.trim();

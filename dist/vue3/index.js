@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.analysisVue = void 0;
+exports.test = exports.analysisVue = void 0;
 const compiler_sfc_1 = require("@vue/compiler-sfc");
 const fs_1 = __importDefault(require("fs"));
 const parser = __importStar(require("@babel/parser"));
@@ -68,4 +68,6 @@ const analysisVue = (filePath) => {
     }
 };
 exports.analysisVue = analysisVue;
+const test = () => { };
+exports.test = test;
 //# sourceMappingURL=index.js.map

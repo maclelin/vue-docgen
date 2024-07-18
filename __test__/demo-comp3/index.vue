@@ -20,22 +20,22 @@ interface TempType2 {
   age: number,
 }
 const props = defineProps({
-  // title: {
-  //   type: String,
-  //   default: '默认标题'
-  // },
-  // content: {
-  //   type: String,
-  //   default: '默认内容'
-  // },
-  // studentObj: {
-  //   type: Object as Proptype<Student>,
-  //   default: () => ({name: 'linjian', score: 1, gender: 'boy'}),
-  // },
-  // studentObj2: {
-  //   type: Object as Proptype<TempType>,
-  //   default: {a: 'test', b: 'test1'},
-  // },
+  title: {
+    type: String,
+    default: '默认标题'
+  },
+  content: {
+    type: String,
+    default: '默认内容'
+  },
+  studentObj: {
+    type: Object as Proptype<Student>,
+    default: () => ({name: 'linjian', score: 1, gender: 'boy'}),
+  },
+  studentObj2: {
+    type: Object as Proptype<TempType>,
+    default: {a: 'test', b: 'test1'},
+  },
   studentObj3: {
     type: Array as Proptype<TempType2[]>,
     default: [],

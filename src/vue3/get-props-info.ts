@@ -22,7 +22,7 @@ export const getType = (node: any, ast: any, vuePath: string) => {
   if (node) {
     propType = node.get('value').toString();
     // 复合类型
-    if (propType.includes('Object as Proptype<')) {
+    if (typeof propType === 'string' && propType.includes('Object as Proptype<')) {
       const customPropType = node.node.value.typeAnnotation.typeParameters.params[0].typeName.name;
       // 拿到类型后要进行转换，拿到这个类型的实际内容
       const types = getImportType(ast, vuePath, customPropType);
@@ -30,7 +30,7 @@ export const getType = (node: any, ast: any, vuePath: string) => {
         propType = types;
       }
     }
-    if (propType.includes('Array as Proptype<')) {
+    if (typeof propType === 'string' && propType.includes('Array as Proptype<')) {
       const customPropType = node.node.value.typeAnnotation.typeParameters.params[0].elementType.typeName.name;
       // 拿到类型后要进行转换，拿到这个类型的实际内容
       const types = getImportType(ast, vuePath, customPropType);
